@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"RestApi/interal/user"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net"
@@ -9,15 +9,14 @@ import (
 	"time"
 )
 
-func IndexHandler(w http.ResponseWriter, r *http.Request, param httprouter.Params) {
-	name := param.ByName("name")
-	w.Write([]byte(fmt.Sprintf("hello %s", name)))
-}
-
 func main() {
-	fmt.Printf("localHost:8080")
+	log.Println("localHost:8080")
 	router := httprouter.New()
-	router.GET("/:name", IndexHandler)
+	handler := user.NewHandler()
+	handler.Register(router)
+	run(router)
+}
+func run(router *httprouter.Router) {
 	listen, err := net.Listen("tcp", "127.0.0.1:8080")
 	if err != nil {
 		log.Fatalln(err)
@@ -27,5 +26,8 @@ func main() {
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	server.Serve(listen)
+	if err := server.Serve(listen); err != nil {
+		log.Fatal(err)
+	}
+
 }
