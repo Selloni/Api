@@ -2,24 +2,29 @@ package main
 
 import (
 	"RestApi/interal/user"
+	"RestApi/pkg/logging"
 	"github.com/julienschmidt/httprouter"
-	"log"
 	"net"
 	"net/http"
 	"time"
 )
 
 func main() {
-	log.Println("localHost:8080")
+	logger := logging.GetLogger()
+	logger.Info("start localhost:8080")
+
 	router := httprouter.New()
+	logger.Info("register user handler")
 	handler := user.NewHandler()
 	handler.Register(router)
 	run(router)
 }
+
 func run(router *httprouter.Router) {
+	logger := logging.GetLogger()
 	listen, err := net.Listen("tcp", "127.0.0.1:8080")
 	if err != nil {
-		log.Fatalln(err)
+		logger.Fatal(err)
 	}
 	server := &http.Server{
 		Handler:      router,
@@ -27,7 +32,7 @@ func run(router *httprouter.Router) {
 		ReadTimeout:  15 * time.Second,
 	}
 	if err := server.Serve(listen); err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 
 }
