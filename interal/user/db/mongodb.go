@@ -4,6 +4,7 @@ import (
 	"RestApi/interal/user"
 	"RestApi/pkg/logging"
 	"context"
+	"errors"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -15,7 +16,7 @@ type db struct {
 	logger     *logging.Logger
 }
 
-func (d db) Create(ctx context.Context, user user.User) (string, error) {
+func (d *db) Create(ctx context.Context, user user.User) (string, error) {
 	d.logger.Debug("create user")
 	result, err := d.collection.InsertOne(ctx, user)
 	if err != nil {
@@ -30,7 +31,7 @@ func (d db) Create(ctx context.Context, user user.User) (string, error) {
 	return "", fmt.Errorf("failed to convert objectId %v", oid)
 }
 
-func (d db) FindOne(ctx context.Context, id string) (u user.User, err error) {
+func (d *db) FindOne(ctx context.Context, id string) (u user.User, err error) {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return u, fmt.Errorf("failed to convert hex to obgectId. Hex :%s", id)
@@ -38,7 +39,9 @@ func (d db) FindOne(ctx context.Context, id string) (u user.User, err error) {
 	query := bson.M{"_id": oid}
 	result := d.collection.FindOne(ctx, query)
 	if result.Err() != nil {
-		// todo 404
+		if errors.Is(result.Err(), mongo.ErrNoDocuments) {
+			// TODO errEntityNotFound
+		}
 		return u, fmt.Errorf("failed to find one user by id: %s", id)
 	}
 	if err = result.Decode(&u); err != nil {
@@ -47,13 +50,53 @@ func (d db) FindOne(ctx context.Context, id string) (u user.User, err error) {
 	return u, nil
 }
 
-func (d db) Update(ctx context.Context, user user.User) error {
-
+func (d *db) Update(ctx context.Context, user user.User) error {
+	objectId, err := primitive.ObjectIDFromHex(user.Id)
+	if err != nil {
+		return fmt.Errorf("failed to convert user Id to ObjectId, id = %s")
+	}
+	filter := bson.M{"_id": objectId}
+	userBytes, err := bson.Marshal(user)
+	if err != nil {
+		return fmt.Errorf("failed to marhsal user. error: %v", err)
+	}
+	var updateUserObj bson.M
+	err = bson.Unmarshal(userBytes, &updateUserObj)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal. err:%v", err)
+	}
+	delete(updateUserObj, "_id")
+	update := bson.M{
+		"$set": updateUserObj,
+	}
+	result, err := d.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return fmt.Errorf("failded to execute update user query. err: %v", err)
+	}
+	if result.MatchedCount == 0 {
+		// TODO errEntityNotFound
+		return fmt.Errorf("not found if  for update")
+	}
+	d.logger.Tracef("Matched %d document and Modified %d dock", result.MatchedCount, result.ModifiedCount)
+	return nil
 }
 
-func (d db) Delete(ctx context.Context, id string) error {
-	//TODO implement me
-	panic("implement me")
+func (d *db) Delete(ctx context.Context, id string) error {
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fmt.Errorf("failde to cinvert user ID to ObjectId. ID=%s", id)
+	}
+	filter := bson.M{"_id": objectId}
+	result, err := d.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return err
+	}
+	if result.DeletedCount == 0 {
+		// TODO errEntyti
+		return fmt.Errorf("not found id for delite")
+	}
+
+	return nil
 }
 
 func NewStorage(database *mongo.Database, collection string, logger *logging.Logger) user.Storage {
