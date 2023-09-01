@@ -26,3 +26,5 @@ time="2023-08-29T14:37:35+03:00" level=info msg="read .yml file" func="RestApi/i
 time="2023-08-29T14:37:35+03:00" level=info msg="register user handler" func="main.main()" file="app.go:24"
 time="2023-08-29T14:37:35+03:00" level=info msg="listen tcp" func="main.run()" file="app.go:50"
 time="2023-08-29T14:37:35+03:00" level=info msg="server is listening port 0.0.0.0:10000" func="main.run()" file="app.go:52"
+time="2023-09-01T08:07:08+03:00" level=info msg="start localhost:8080" func="main.main()" file="app.go:22"
+time="2023-09-01T08:07:08+03:00" level=info msg="read .yml file" func="RestApi/interal/config.GetConfig.func1()" file="config.go:33"

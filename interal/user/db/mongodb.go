@@ -50,6 +50,21 @@ func (d *db) FindOne(ctx context.Context, id string) (u user.User, err error) {
 	return u, nil
 }
 
+func (d *db) FindAll(ctx context.Context) (u []user.User, err error) {
+	cursor, err := d.collection.Find(ctx, bson.M{})
+	if cursor.Err() != nil {
+		return u, fmt.Errorf("failed to all users %v", err)
+	}
+
+	if err = cursor.All(ctx, &u); err != nil {
+		return u, fmt.Errorf("failde to read all documents from cursor")
+	}
+	if err = cursor.Decode(&u); err != nil {
+		return u, fmt.Errorf("failed to decode all users")
+	}
+	return u, nil
+}
+
 func (d *db) Update(ctx context.Context, user user.User) error {
 	objectId, err := primitive.ObjectIDFromHex(user.Id)
 	if err != nil {
@@ -100,7 +115,6 @@ func (d *db) Delete(ctx context.Context, id string) error {
 }
 
 func NewStorage(database *mongo.Database, collection string, logger *logging.Logger) user.Storage {
-
 	return &db{
 		collection: database.Collection(collection),
 		logger:     logger,

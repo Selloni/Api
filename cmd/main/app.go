@@ -3,7 +3,10 @@ package main
 import (
 	"RestApi/interal/config"
 	"RestApi/interal/user"
+	"RestApi/interal/user/db"
+	"RestApi/pkg/client/mongodb"
 	"RestApi/pkg/logging"
+	"context"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net"
@@ -19,6 +22,21 @@ func main() {
 	logger.Info("start localhost:8080")
 
 	cfg := config.GetConfig()
+	cfgMongo := cfg.MongoDB
+	mongoClient, err := mongodb.NewClient(context.Background(), cfgMongo.Host, cfgMongo.Port,
+		cfgMongo.Username, cfgMongo.Password, cfgMongo.Database, cfgMongo.AuthDB)
+	if err != nil {
+		return
+	}
+	storage := db.NewStorage(mongoClient, cfgMongo.Collection, logger)
+	user1 := user.User{
+		Id:           "",
+		Email:        "vip.petrusev@mail.ru",
+		Username:     "lol",
+		PasswordHash: "1234",
+	}
+	user1Id, err := storage.Create(context.Background(), user1)
+	logger.Info(user1Id)
 
 	router := httprouter.New()
 	logger.Info("register user handler")
