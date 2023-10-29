@@ -1,8 +1,8 @@
 package user
 
 import (
-	"RestApi/interal/handlers"
-	"RestApi/pkg/logging"
+	"RestApi/Rest/interal/handlers"
+	"RestApi/Rest/pkg/logging"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"

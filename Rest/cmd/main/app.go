@@ -1,11 +1,11 @@
 package main
 
 import (
-	"RestApi/interal/config"
-	"RestApi/interal/user"
-	"RestApi/interal/user/db"
-	"RestApi/pkg/client/mongodb"
-	"RestApi/pkg/logging"
+	"RestApi/Rest/interal/config"
+	user2 "RestApi/Rest/interal/user"
+	"RestApi/Rest/interal/user/db"
+	"RestApi/Rest/pkg/client/mongodb"
+	"RestApi/Rest/pkg/logging"
 	"context"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
@@ -29,7 +29,7 @@ func main() {
 		return
 	}
 	storage := db.NewStorage(mongoClient, cfgMongo.Collection, logger)
-	user1 := user.User{
+	user1 := user2.User{
 		Id:           "",
 		Email:        "vip.petrusev@mail.ru",
 		Username:     "lol",
@@ -40,7 +40,7 @@ func main() {
 
 	router := httprouter.New()
 	logger.Info("register user handler")
-	handler := user.NewHandler(logger)
+	handler := user2.NewHandler(logger)
 	handler.Register(router)
 	run(router, cfg)
 }

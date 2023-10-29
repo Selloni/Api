@@ -1,7 +1,7 @@
 package user
 
 import (
-	"RestApi/pkg/logging"
+	"RestApi/Rest/pkg/logging"
 	"context"
 )
 
