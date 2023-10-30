@@ -1,16 +1,18 @@
 package main
 
 import (
-	"gRPC/pkg/adder"
-	"gRPC/pkg/api/proto"
+	proto "gRPC/proto"
 	"google.golang.org/grpc"
 	"log"
 	"net"
 )
 
+type server struct {
+}
+
 func main() {
 	s := grpc.NewServer()
-	srv := &adder.GRPCServer{} // реализованный интерфейс
+	srv := &proto.GRPCServer{} // реализованный интерфейс
 	proto.RegisterAdderServer(s, srv)
 	listen, err := net.Listen("tcp", ":8080")
 	if err != nil {
