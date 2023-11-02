@@ -1,4 +1,0 @@
-time="2023-09-01T08:03:42+03:00" level=info msg="start localhost:8080" func="main.main()" file="app.go:22"
-time="2023-09-01T08:03:42+03:00" level=info msg="read .yml file" func="RestApi/interal/config.GetConfig.func1()" file="config.go:33"
-time="2023-09-01T08:03:42+03:00" level=info func="RestApi/interal/config.GetConfig.func1()" file="config.go:37"
-time="2023-09-01T08:03:42+03:00" level=fatal msg="open ../../config.yml: no such file or directory" func="RestApi/interal/config.GetConfig.func1()" file="config.go:38"
