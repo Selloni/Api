@@ -12,9 +12,9 @@ import (
 )
 
 type SessionManager struct {
-	mu       sync.RWMutex
-	sessions map[string]*session.Session
-	session.UnimplementedAuthCheckerServer
+	mu                                     sync.RWMutex                // блокировка
+	sessions                               map[string]*session.Session // хранилище
+	session.UnimplementedAuthCheckerServer                             // необходимо для реализации интерфейса
 }
 
 func NewSessionManager() *SessionManager {

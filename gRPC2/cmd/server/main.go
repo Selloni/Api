@@ -10,15 +10,13 @@ import (
 )
 
 func main() {
-
 	listen, err := net.Listen("tcp", ":8081")
 	if err != nil {
 		log.Fatalf("cannot crate listener: %v", err)
 	}
-	MyServer := grpc.NewServer()
-	service := pkg.NewSessionManager()
-	session.RegisterAuthCheckerServer(MyServer, service)
+	MyServer := grpc.NewServer()                         // стандартный сервер
+	service := pkg.NewSessionManager()                   // структура реализующая интерфейс
+	session.RegisterAuthCheckerServer(MyServer, service) // сгенеренный код
 	fmt.Println("starting server at:8081")
 	MyServer.Serve(listen)
-
 }
