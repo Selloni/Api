@@ -1,13 +1,11 @@
-package main
+package pkg
 
 import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"log"
 	"math/rand"
-	"net"
 	"strconv"
 	"sync"
 	session "testgRPC/invoicer"
@@ -50,20 +48,9 @@ func (s SessionManager) Delete(ctx context.Context, in *session.SessionId) (*ses
 	fmt.Println("call Delete", in)
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	delete(s.sessions, in.ID)
-	return &session.Nothing{Dummy: true}, nil
-}
-
-func main() {
-
-	listen, err := net.Listen("tcp", ":8081")
-	if err != nil {
-		log.Fatalf("cannot crate listener: %v", err)
+	if _, ok := s.sessions[in.ID]; ok == true {
+		delete(s.sessions, in.ID)
+		return &session.Nothing{Dummy: true}, nil
 	}
-	MyServer := grpc.NewServer()
-	service := NewSessionManager()
-	session.RegisterAuthCheckerServer(MyServer, service)
-	fmt.Println("starting server at:8081")
-	MyServer.Serve(listen)
-
+	return &session.Nothing{Dummy: false}, nil
 }
