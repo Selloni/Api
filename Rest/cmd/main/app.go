@@ -1,10 +1,10 @@
 package main
 
 import (
+	author "RestApi/Rest/interal/book/db"
 	"RestApi/Rest/interal/config"
 	user2 "RestApi/Rest/interal/user"
-	"RestApi/Rest/interal/user/db"
-	"RestApi/Rest/pkg/client/mongodb"
+	postrge "RestApi/Rest/pkg/client/postgresql"
 	"RestApi/Rest/pkg/logging"
 	"context"
 	"fmt"
@@ -20,26 +20,34 @@ import (
 func main() {
 	logger := logging.GetLogger()
 	logger.Info("start localhost:8080")
-
-	cfg := config.GetConfig()
-	cfgMongo := cfg.MongoDB
-	mongoClient, err := mongodb.NewClient(context.Background(), cfgMongo.Host, cfgMongo.Port,
-		cfgMongo.Username, cfgMongo.Password, cfgMongo.Database, cfgMongo.AuthDB)
-	if err != nil {
-		return
-	}
-	storage := db.NewStorage(mongoClient, cfgMongo.Collection, logger)
-	user1 := user2.User{
-		Id:           "",
-		Email:        "vip.petrusev@mail.ru",
-		Username:     "lol",
-		PasswordHash: "1234",
-	}
-	user1Id, err := storage.Create(context.Background(), user1)
-	logger.Info(user1Id)
-
 	router := httprouter.New()
-	logger.Info("register user handler")
+	cfg := config.GetConfig()
+
+	client, err := postrge.NewClient(context.TODO(), 3, cfg.Storage)
+	repository := author.NewRepository(client, logger)
+
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	//cfgMongo := cfg.MongoDB
+	//mongoClient, err := mongodb.NewClient(context.Background(), cfgMongo.Host, cfgMongo.Port,
+	//	cfgMongo.Username, cfgMongo.Password, cfgMongo.Database, cfgMongo.AuthDB)
+	//if err != nil {
+	//	return
+	//}
+	//storage := db.NewStorage(mongoClient, cfgMongo.Collection, logger)
+	//user1 := user2.User{
+	//	Id:           "",
+	//	Email:        "vip.petrusev@mail.ru",
+	//	Username:     "lol",
+	//	PasswordHash: "1234",
+	//}
+	//user1Id, err := storage.Create(context.Background(), user1)
+	//logger.Info(user1Id)
+	//
+	//router := httprouter.New()
+	//logger.Info("register user handler")
 	handler := user2.NewHandler(logger)
 	handler.Register(router)
 	run(router, cfg)

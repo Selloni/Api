@@ -2,7 +2,7 @@ package db
 
 import (
 	"RestApi/Rest/interal/book"
-	"RestApi/Rest/pkg/client/postgresql"
+	postgresql "RestApi/Rest/pkg/client/postgresql"
 	"RestApi/Rest/pkg/logging"
 	"context"
 	"fmt"
@@ -72,12 +72,12 @@ func (r *repository) FindAll(ctx context.Context) (u []book.Author, err error) {
 	return author, nil
 }
 
-//func (r *repository) Update(ctx context.Context, author book.Author) error {
-//
-//}
-//func (r *repository) Delete(ctx context.Context, id string) error {
-//
-//}
+func (r *repository) Update(ctx context.Context, author book.Author) error {
+	return nil
+}
+func (r *repository) Delete(ctx context.Context, id string) error {
+	return nil
+}
 
 func NewRepository(client postgresql.Client, logger *logging.Logger) *repository {
 	return &repository{

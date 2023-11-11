@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package user_service.service.v1;
+
+//option go_package = ""
+
+
+// optional необязательноезаполненное поле
+message GetUserRequest {
+  optional string name = 1;
+  optional string  age = 2;
+  optional string  email = 3;
+}
+
+// repeated - массив
+message GetUserResponse {
+ repeated User users = 1;
+}
+
+service  UserService {
+  rpc GetUsers (GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {  // http вызов - для работы нужно импортировать библиотеку google
+      get: "/v1/get-users"
+      body:"*"
+    };
+  }
+
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {  // http вызов - для работы нужно импортировать библиотеку google
+      patch: "/v1/update-users/{id}"
+      body:"*"
+    };
+  }
+//  rpc DeleteUser (GetUserRequest)
+}
+
+message UpdateUserRequest {
+  string id = 1; //  данные замапяться в url
+  optional string name = 2; // mapped to body
+  optional uint32  age = 3; // mapped to body
+  optional string email = 4; // mapped to body
+}
+
+// Это ответ для обновления пользователя .
+message UpdateUserResponse {
+ User user = 1;
+}
