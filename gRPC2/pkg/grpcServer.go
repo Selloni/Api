@@ -29,10 +29,11 @@ func (s SessionManager) Create(ctx context.Context, in *session.Session) (*sessi
 	log.Println("call Create", in)
 
 	// паралельное ip, все проверяется через runtime (пользоваться осторожно)
+	// если передавать не валидные данные, код не отрабатывает
 	header := metadata.Pairs("header-key", "42") // можно даставть данные из мапы
 	grpc.SendHeader(ctx, header)                 // передаю методанные
 
-	trailer := metadata.Pairs("trailer=key", "3.14")
+	trailer := metadata.Pairs("trailer-key", "3.14")
 	grpc.SetTrailer(ctx, trailer)
 
 	id := strconv.Itoa(rand.Intn(98) + 1)

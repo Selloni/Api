@@ -72,22 +72,18 @@ func main() {
 
 	// ------
 
-	//var header, trailer metadata.MD // --даные которые придут в начале запроса и в конеце
+	var header, trailer metadata.MD // --даные которые придут в начале запроса и в конеце
 
 	// создаем сессию
-	sessId, err := pkg.Create(ctx,
+	sessId, err := sessionManager.Create(ctx,
 		&session.Session{
 			Login:     "Kot",
 			Useragent: "chrome",
 		},
-		//grpc.Header(&header), // передаем только системные данные
-		//grpc.Trailer(&trailer),
+		grpc.Header(&header), // передаем только системные данные
+		grpc.Trailer(&trailer),
 	)
 	log.Println("sessId", sessId, err)
-
-	//tmp := session.SessionId{
-	//	ID: sessId.ID,
-	//}
 
 	// проверяем сессию
 	sess, err := sessionManager.Check(ctx,
