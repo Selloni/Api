@@ -2,9 +2,10 @@ package pkg
 
 import (
 	"context"
-	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
+	"log"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -25,19 +26,25 @@ func NewSessionManager() *SessionManager {
 }
 
 func (s SessionManager) Create(ctx context.Context, in *session.Session) (*session.SessionId, error) {
-	fmt.Println("call Create", in)
+	log.Println("call Create", in)
+
+	// паралельное ip, все проверяется через runtime (пользоваться осторожно)
+	header := metadata.Pairs("header-key", "42") // можно даставть данные из мапы
+	grpc.SendHeader(ctx, header)                 // передаю методанные
+
+	trailer := metadata.Pairs("trailer=key", "3.14")
+	grpc.SetTrailer(ctx, trailer)
+
 	id := strconv.Itoa(rand.Intn(98) + 1)
-	fmt.Printf("create ID - %s\n", id)
 	idS := &session.SessionId{ID: id}
-	fmt.Println()
 	s.mu.Lock()
 	s.sessions[id] = in
 	s.mu.Unlock()
+	log.Printf("create ID - %s\n", idS.ID)
 	return idS, nil
-
 }
 func (s SessionManager) Check(ctx context.Context, in *session.SessionId) (*session.Session, error) {
-	fmt.Println("call Check", in)
+	log.Println("call Check", in)
 	s.mu.RLock()
 	if sess, ok := s.sessions[in.ID]; ok {
 		return sess, nil
@@ -45,7 +52,7 @@ func (s SessionManager) Check(ctx context.Context, in *session.SessionId) (*sess
 	return nil, grpc.Errorf(codes.NotFound, "session not found")
 }
 func (s SessionManager) Delete(ctx context.Context, in *session.SessionId) (*session.Nothing, error) {
-	fmt.Println("call Delete", in)
+	log.Println("call Delete", in)
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if _, ok := s.sessions[in.ID]; ok == true {
