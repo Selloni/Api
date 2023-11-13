@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package translit;
+
+option go_package = "stream/proto/session";
+
+message Word {
+  string Word = 1;
+}
+
+// grpc сервис трансялции
+service Transliteation {
+  rpc EnRu(stream Word) returns (stream Word) {}
+}
