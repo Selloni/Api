@@ -3,6 +3,7 @@ module RestApi
 go 1.19
 
 require (
+	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jackc/pgconn v1.14.0
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jackc/pgx/v4 v4.18.1
@@ -14,7 +15,6 @@ require (
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/ilyakaznacheev/cleanenv v1.5.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
