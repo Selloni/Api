@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-
 	grpcConn, err := grpc.Dial(
 		"127.0.0.1:8081",
 		grpc.WithInsecure(),
@@ -15,5 +14,4 @@ func main() {
 		log.Fatal("cant connect to grpc")
 	}
 	defer grpcConn.Close()
-
 }
