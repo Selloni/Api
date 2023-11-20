@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/Conight/go-googletrans v0.2.4 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect

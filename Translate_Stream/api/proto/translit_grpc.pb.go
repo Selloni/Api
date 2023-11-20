@@ -19,48 +19,48 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Transliteation_EnRu_FullMethodName = "/translit.Transliteation/EnRu"
+	Transliteration_EnRu_FullMethodName = "/translit.Transliteration/EnRu"
 )
 
-// TransliteationClient is the client API for Transliteation service.
+// TransliterationClient is the client API for Transliteration service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type TransliteationClient interface {
-	EnRu(ctx context.Context, opts ...grpc.CallOption) (Transliteation_EnRuClient, error)
+type TransliterationClient interface {
+	EnRu(ctx context.Context, opts ...grpc.CallOption) (Transliteration_EnRuClient, error)
 }
 
-type transliteationClient struct {
+type transliterationClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTransliteationClient(cc grpc.ClientConnInterface) TransliteationClient {
-	return &transliteationClient{cc}
+func NewTransliterationClient(cc grpc.ClientConnInterface) TransliterationClient {
+	return &transliterationClient{cc}
 }
 
-func (c *transliteationClient) EnRu(ctx context.Context, opts ...grpc.CallOption) (Transliteation_EnRuClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Transliteation_ServiceDesc.Streams[0], Transliteation_EnRu_FullMethodName, opts...)
+func (c *transliterationClient) EnRu(ctx context.Context, opts ...grpc.CallOption) (Transliteration_EnRuClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Transliteration_ServiceDesc.Streams[0], Transliteration_EnRu_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &transliteationEnRuClient{stream}
+	x := &transliterationEnRuClient{stream}
 	return x, nil
 }
 
-type Transliteation_EnRuClient interface {
+type Transliteration_EnRuClient interface {
 	Send(*Word) error
 	Recv() (*Word, error)
 	grpc.ClientStream
 }
 
-type transliteationEnRuClient struct {
+type transliterationEnRuClient struct {
 	grpc.ClientStream
 }
 
-func (x *transliteationEnRuClient) Send(m *Word) error {
+func (x *transliterationEnRuClient) Send(m *Word) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *transliteationEnRuClient) Recv() (*Word, error) {
+func (x *transliterationEnRuClient) Recv() (*Word, error) {
 	m := new(Word)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -68,53 +68,53 @@ func (x *transliteationEnRuClient) Recv() (*Word, error) {
 	return m, nil
 }
 
-// TransliteationServer is the server API for Transliteation service.
-// All implementations must embed UnimplementedTransliteationServer
+// TransliterationServer is the server API for Transliteration service.
+// All implementations must embed UnimplementedTransliterationServer
 // for forward compatibility
-type TransliteationServer interface {
-	EnRu(Transliteation_EnRuServer) error
-	mustEmbedUnimplementedTransliteationServer()
+type TransliterationServer interface {
+	EnRu(Transliteration_EnRuServer) error
+	mustEmbedUnimplementedTransliterationServer()
 }
 
-// UnimplementedTransliteationServer must be embedded to have forward compatible implementations.
-type UnimplementedTransliteationServer struct {
+// UnimplementedTransliterationServer must be embedded to have forward compatible implementations.
+type UnimplementedTransliterationServer struct {
 }
 
-func (UnimplementedTransliteationServer) EnRu(Transliteation_EnRuServer) error {
+func (UnimplementedTransliterationServer) EnRu(Transliteration_EnRuServer) error {
 	return status.Errorf(codes.Unimplemented, "method EnRu not implemented")
 }
-func (UnimplementedTransliteationServer) mustEmbedUnimplementedTransliteationServer() {}
+func (UnimplementedTransliterationServer) mustEmbedUnimplementedTransliterationServer() {}
 
-// UnsafeTransliteationServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TransliteationServer will
+// UnsafeTransliterationServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TransliterationServer will
 // result in compilation errors.
-type UnsafeTransliteationServer interface {
-	mustEmbedUnimplementedTransliteationServer()
+type UnsafeTransliterationServer interface {
+	mustEmbedUnimplementedTransliterationServer()
 }
 
-func RegisterTransliteationServer(s grpc.ServiceRegistrar, srv TransliteationServer) {
-	s.RegisterService(&Transliteation_ServiceDesc, srv)
+func RegisterTransliterationServer(s grpc.ServiceRegistrar, srv TransliterationServer) {
+	s.RegisterService(&Transliteration_ServiceDesc, srv)
 }
 
-func _Transliteation_EnRu_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(TransliteationServer).EnRu(&transliteationEnRuServer{stream})
+func _Transliteration_EnRu_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(TransliterationServer).EnRu(&transliterationEnRuServer{stream})
 }
 
-type Transliteation_EnRuServer interface {
+type Transliteration_EnRuServer interface {
 	Send(*Word) error
 	Recv() (*Word, error)
 	grpc.ServerStream
 }
 
-type transliteationEnRuServer struct {
+type transliterationEnRuServer struct {
 	grpc.ServerStream
 }
 
-func (x *transliteationEnRuServer) Send(m *Word) error {
+func (x *transliterationEnRuServer) Send(m *Word) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *transliteationEnRuServer) Recv() (*Word, error) {
+func (x *transliterationEnRuServer) Recv() (*Word, error) {
 	m := new(Word)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -122,17 +122,17 @@ func (x *transliteationEnRuServer) Recv() (*Word, error) {
 	return m, nil
 }
 
-// Transliteation_ServiceDesc is the grpc.ServiceDesc for Transliteation service.
+// Transliteration_ServiceDesc is the grpc.ServiceDesc for Transliteration service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Transliteation_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "translit.Transliteation",
-	HandlerType: (*TransliteationServer)(nil),
+var Transliteration_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "translit.Transliteration",
+	HandlerType: (*TransliterationServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "EnRu",
-			Handler:       _Transliteation_EnRu_Handler,
+			Handler:       _Transliteration_EnRu_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
