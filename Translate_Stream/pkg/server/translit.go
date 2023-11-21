@@ -1,9 +1,9 @@
 package server
 
 import (
-	"fmt"
 	tr "github.com/Conight/go-googletrans"
 	"io"
+	"log"
 	session "steam/api/proto"
 )
 
@@ -11,10 +11,15 @@ type TrServer struct {
 	session.UnimplementedTransliterationServer // встраивание
 }
 
+//func NewServer() *TrServer {
+//	return &TrServer{}
+//}
+
 func (s TrServer) EnRu(inStream session.Transliteration_EnRuServer) error {
 	t := tr.New()
 	for {
 		inWord, err := inStream.Recv()
+		log.Println("server-get", inWord.Word)
 		if err == io.EOF {
 			return nil
 		}
@@ -25,7 +30,6 @@ func (s TrServer) EnRu(inStream session.Transliteration_EnRuServer) error {
 		out := &session.Word{
 			Word: ressult.Text,
 		}
-		fmt.Println("server", out)
 		inStream.Send(out)
 	}
 }

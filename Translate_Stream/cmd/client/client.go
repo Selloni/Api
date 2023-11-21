@@ -29,31 +29,20 @@ func main() {
 	wg.Add(2)
 
 	// отправлем данные
-	go func(wg *sync.WaitGroup) {
+	func(wg *sync.WaitGroup) {
 		defer wg.Done()
 		ruWord := []string{"Привет", "удивительный", "МИР", "!"}
-		//sc := bufio.NewScanner(os.Stdin)
-		//for sc.Scan() {
-		//	txt := sc.Text()
-		//	if txt == "" {
-		//		client.CloseSend()
-		//		return
-		//	}
-		//	client.Send(&session.Word{
-		//		Word: txt,
-		//	})
-		//}
 		for _, s := range ruWord {
 			client.Send(&session.Word{
 				Word: s,
 			})
+			//time.Sleep(1 * time.Second)
 		}
-		defer client.CloseSend()
-		fmt.Println("send done")
+		client.CloseSend()
 	}(wg)
 
 	// получаем данные
-	go func(wg *sync.WaitGroup) {
+	func(wg *sync.WaitGroup) {
 		defer wg.Done()
 		for {
 			outWord, err := client.Recv()
