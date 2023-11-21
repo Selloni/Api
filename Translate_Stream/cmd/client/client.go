@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"os"
 	session "steam/api/proto"
 	"sync"
 )
@@ -29,20 +31,24 @@ func main() {
 	wg.Add(2)
 
 	// отправлем данные
-	func(wg *sync.WaitGroup) {
+	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		ruWord := []string{"Привет", "удивительный", "МИР", "!"}
-		for _, s := range ruWord {
+		sc := bufio.NewScanner(os.Stdin)
+		fmt.Println("Введите текст, мы переведем его на английский")
+		for sc.Scan() {
+			txt := sc.Text()
+			if txt == "" {
+				client.CloseSend()
+				return
+			}
 			client.Send(&session.Word{
-				Word: s,
+				Word: txt,
 			})
-			//time.Sleep(1 * time.Second)
 		}
-		client.CloseSend()
 	}(wg)
 
 	// получаем данные
-	func(wg *sync.WaitGroup) {
+	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
 		for {
 			outWord, err := client.Recv()
@@ -51,10 +57,10 @@ func main() {
 				return
 			}
 			if err != nil {
-				fmt.Println("fatal error:", err)
+				log.Fatal("fatal error:", err)
 				return
 			}
-			fmt.Println(outWord)
+			fmt.Println("с_с):", outWord.Word)
 		}
 	}(wg)
 	wg.Wait()
